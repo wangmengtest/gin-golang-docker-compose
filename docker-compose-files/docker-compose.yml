@@ -1,0 +1,70 @@
+version: '3'
+services:
+  #后端cms-接口服务
+  gs2_admin_cms_api:
+    image: gs_admin2/cms_api:${backend_cms_api_version}
+    ports:
+      - "22002:22002"
+    container_name: gs-admin2-cms-api-${backend_cms_api_version}
+    restart: "always"
+    privileged: true
+    depends_on:
+      - redis626
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone/timezone:/etc/timezone:ro
+      - ./backend-cms-api/conf/config/:/root/golang_data/gin-skeleton-admin2-backend/config/
+      - ./backend-cms-api/conf/storage/:/root/golang_data/gin-skeleton-admin2-backend/storage/
+    networks:
+      - gs_admin2_network
+
+  # 后端cms接口 nginx 代理
+  backend-cms-api-nginxproxy:
+    image: zhangqifeng/nginx_vts:v1.52
+    container_name: nginx-proxy-cms-api
+    restart: "always"
+    privileged: true
+    ports:
+      - "22001:80"
+    volumes:
+      - ./backend-cms-api/nginx/conf/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./backend-cms-api/nginx/logs/:/usr/local/nginx/logs/
+    networks:
+      - gs_admin2_network
+
+#redis 服务6.26版本
+  redis626:
+    image: redis:6.2.6
+    ports:
+      - "6379:6379"
+    container_name: redis626
+    restart: "always"
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./redis/datadir:/data
+      - ./redis/logs:/logs
+      #- ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server --requirepass Secret2017~
+    networks:
+      - gs_admin2_network
+
+# 前端界面 nginx 代理
+  backend-cms-ui-nginxproxy:
+    image: zhangqifeng/nginx_vts:v1.52
+    container_name: nginx-proxy-cms-ui
+    restart: "always"
+    privileged: true
+    ports:
+      - "22003:80"
+    volumes:
+      - ./backend-cms-ui/dist/:/usr/local/nginx/html/
+      - ./backend-cms-ui/nginx/conf/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./backend-cms-ui/nginx/logs/:/usr/local/nginx/logs/
+    networks:
+      - gs_admin2_network
+
+networks:
+  gs_admin2_network:
+    driver: bridge

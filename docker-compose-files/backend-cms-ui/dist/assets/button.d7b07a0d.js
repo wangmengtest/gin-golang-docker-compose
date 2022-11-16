@@ -1,0 +1,1 @@
+import{X as o}from"./index.fe47ded2.js";const e=t=>o.get("/button/list",t),r=t=>o.post("/button/create",t),n=t=>o.post("/button/edit",t),a=t=>o.post("/button/destroy",{id:t});export{r as c,a as d,n as e,e as l};

@@ -1,0 +1,1 @@
+import{X as o}from"./index.fe47ded2.js";const i=t=>o.get("/organization/list",t),n=t=>o.post("/organization/create",t),s=t=>o.post("/organization/edit",t),a=t=>o.post("/organization/destroy",{id:parseInt(t)}),e=t=>o.get("/organization/get_by_fid",{fid:t});export{n as c,a as d,s as e,e as g,i as l};
